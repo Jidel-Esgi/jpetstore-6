@@ -1,84 +1,132 @@
-MyBatis JPetStore
-=================
+# KUBERNETES PARTIE II - CC - REVERSE ENGINEERING - Voting App
 
-[![Java CI](https://github.com/mybatis/jpetstore-6/actions/workflows/ci.yaml/badge.svg)](https://github.com/mybatis/jpetstore-6/actions/workflows/ci.yaml)
-[![Container Support](https://github.com/mybatis/jpetstore-6/actions/workflows/support.yaml/badge.svg)](https://github.com/mybatis/jpetstore-6/actions/workflows/support.yaml)
-[![Coverage Status](https://coveralls.io/repos/github/mybatis/jpetstore-6/badge.svg?branch=master)](https://coveralls.io/github/mybatis/jpetstore-6?branch=master)
-[![License](https://img.shields.io/:license-apache-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+# Objectif
 
-![mybatis-jpetstore](https://mybatis.org/images/mybatis-logo.png)
 
-JPetStore 6 is a full web application built on top of MyBatis 3, Spring 5 and Stripes.
+### Le but de ce projet était de déployer l'application open-source Example Voting App sur un
 
-Essentials
-----------
+### cluster Kubernetes local via Minikube. J'ai ensuite vérifié que le système de vote fonctionne
 
-* [See the docs](http://www.mybatis.org/jpetstore-6)
+### correctement et que les résultats apparaissent en temps réel.
 
-## Other versions that you may want to know about
+## Architecture de l'application
 
-- JPetstore on top of Spring, Spring MVC, MyBatis 3, and Spring Security https://github.com/making/spring-jpetstore
-- JPetstore with Vaadin and Spring Boot with Java Config https://github.com/igor-baiborodine/jpetstore-6-vaadin-spring-boot
-- JPetstore on MyBatis Spring Boot Starter https://github.com/kazuki43zoo/mybatis-spring-boot-jpetstore
+### Voici le schéma que j’ai réalisé pour illustrer les flux entre les composants, pour mieux
 
-## Run on Application Server
-Running JPetStore sample under Tomcat (using the [cargo-maven2-plugin](https://codehaus-cargo.github.io/cargo/Maven2+plugin.html)).
+### comprendre le fonctionnement, j'ai analysé les rôles de chaque composant de l'application
 
-- Clone this repository
+### Voici ce que chaque service fait :
 
-  ```
-  $ git clone https://github.com/mybatis/jpetstore-6.git
-  ```
+## Étapes de déploiement
 
-- Build war file
+### Comprendre le fonctionnement d’une application multi-conteneurs
 
-  ```
-  $ cd jpetstore-6
-  $ ./mvnw clean package
-  ```
+### Tester la communication entre les différents services
 
-- Startup the Tomcat server and deploy web application
+### Documenter chaque étape avec des captures d’écran
 
-  ```
-  $ ./mvnw cargo:run -P tomcat90
-  ```
+### Proposer un schéma d’architecture pour mieux visualiser les interactions
 
-  > Note:
-  >
-  > We provide maven profiles per application server as follow:
-  >
-  > | Profile        | Description |
-  > | -------------- | ----------- |
-  > | tomcat90       | Running under the Tomcat 9.0 |
-  > | tomcat85       | Running under the Tomcat 8.5 |
-  > | tomee80        | Running under the TomEE 8.0(Java EE 8) |
-  > | tomee71        | Running under the TomEE 7.1(Java EE 7) |
-  > | wildfly26      | Running under the WildFly 26(Java EE 8) |
-  > | wildfly13      | Running under the WildFly 13(Java EE 7) |
-  > | liberty-ee8    | Running under the WebSphere Liberty(Java EE 8) |
-  > | liberty-ee7    | Running under the WebSphere Liberty(Java EE 7) |
-  > | jetty          | Running under the Jetty 9 |
-  > | glassfish5     | Running under the GlassFish 5(Java EE 8) |
-  > | glassfish4     | Running under the GlassFish 4(Java EE 7) |
-  > | resin          | Running under the Resin 4 |
+### Une application web en Python (vote) permet de choisir une option
 
-- Run application in browser http://localhost:8080/jpetstore/ 
-- Press Ctrl-C to stop the server.
+### Le service Redis récupère les votes temporairement
 
-## Run on Docker
-```
-docker build . -t jpetstore
-docker run -p 8080:8080 jpetstore
-```
-or with Docker Compose:
-```
-docker compose up -d
-```
+### Un worker .NET lit Redis et enregistre les votes dans PostgreSQL
 
-## Try integration tests
+### Enfin, l'interface result (Node.js) affiche en direct les résultats
 
-Perform integration tests for screen transition.
+
+### 1. Préparation de l'environnement
+
+### Dans un premier temps, j'ai préparé l'environnement en installant les outils nécessaire pour le
+
+### bon fonctionnement du projet
+
+### Outils essentiels et commandes d'installation
+
+#### Outil Commande d’installation
+
+#### curl sudo apt install curl -y`
+
+#### Git sudo apt install git - y
+
+#### Docker sudo apt install - y docker.io``sudo systemctl enable docker``sudo systemctl start
 
 ```
-$ ./mvnw clean verify -P tomcat90
+docker``sudo usermod - aG docker $USER
 ```
+#### kubectl curl - LO "https://dl.k^8 s.io/release/$(curl- Ls
+
+```
+https://dl.k 8 s.io/release/stable.txt)/bin/linux/amd 64 /kubectl"``sudo install - o r
+root - m 0755 kubectl /usr/local/bin/kubectl
+```
+#### Minikube curl - LO
+
+```
+https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd 64 .deb
+dpkg - i minikube_latest_amd 64 .deb
+```
+### Vérification après installation
+
+
+#### Outil Commande
+
+#### Minikube minikube version
+
+#### kubectl kubectl version - -client
+
+#### Docker docker - -version
+
+#### Git git - -version
+
+### 1. Lancer Minikube
+
+### J’ai commencé par démarrer Minikube avec la commande suivante :
+
+### 2. Cloner le projet Voting App
+
+### Ensuite, j’ai forké le dépôt contenant les fichiers de déploiement YAML et je l'ai cloné sur ma
+
+### machine :
+
+#### minikube start
+
+#### git clone https://github.com/Vaksalan/example-voting-app
+
+#### cd example-voting-app/k 8 s-specifications
+
+
+### 3. Appliquer les manifests Kubernetes
+
+### J’ai déployé l’ensemble des services avec cette commande :
+
+### 4. Vérifier les objets déployés
+
+### Pour m’assurer que tout fonctionne bien, j’ai vérifié les pods et services :
+
+#### kubectl create - f.
+
+#### kubectl get all
+
+
+### 5. Récupérer l’adresse IP du cluster Minikube
+
+### J’ai utilisé cette commande pour connaître l’adresse IP de Minikube :
+
+### 6. Accéder aux interfaces vote/result
+
+### En utilisant l’IP récupérée précédemment et les NodePort associés aux services, j’ai pu
+
+### accéder aux interfaces suivantes :
+
+#### minikube ip
+
+#### kubectl get svc
+
+### vote : http://192.168.58.2:31000 
+
+### result : http://192.168.58.2:31001
+
+
+## Résultats obtenus
