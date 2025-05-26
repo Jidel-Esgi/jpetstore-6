@@ -1,40 +1,15 @@
-# KUBERNETES PARTIE II - CC - REVERSE ENGINEERING - Voting App
+# KUBERNETES PARTIE II - PROJET - DEVOPS - Orchestration - Jidel Louison
+
+# Jidel 5SRC
 
 # Objectif
 
 
-### Le but de ce projet était de déployer l'application open-source Example Voting App sur un
+### Ce projet à pour objectif de déployer et orchestrer trois applications conteneurisées dans un
 
-### cluster Kubernetes local via Minikube. J'ai ensuite vérifié que le système de vote fonctionne
-
-### correctement et que les résultats apparaissent en temps réel.
-
-## Architecture de l'application
-
-### Voici le schéma que j’ai réalisé pour illustrer les flux entre les composants, pour mieux
-
-### comprendre le fonctionnement, j'ai analysé les rôles de chaque composant de l'application
-
-### Voici ce que chaque service fait :
+### cluster Kubernetes Minikube pour l’entreprise fictive IC GROUP :
 
 ## Étapes de déploiement
-
-### Comprendre le fonctionnement d’une application multi-conteneurs
-
-### Tester la communication entre les différents services
-
-### Documenter chaque étape avec des captures d’écran
-
-### Proposer un schéma d’architecture pour mieux visualiser les interactions
-
-### Une application web en Python (vote) permet de choisir une option
-
-### Le service Redis récupère les votes temporairement
-
-### Un worker .NET lit Redis et enregistre les votes dans PostgreSQL
-
-### Enfin, l'interface result (Node.js) affiche en direct les résultats
-
 
 ### 1. Préparation de l'environnement
 
@@ -44,89 +19,211 @@
 
 ### Outils essentiels et commandes d'installation
 
-#### Outil Commande d’installation
+**Outil Commande d’installation**
 
-#### curl sudo apt install curl -y`
+**curl** sudo apt install curl -y`
 
-#### Git sudo apt install git - y
+**Git** sudo apt install git - y
 
-#### Docker sudo apt install - y docker.io``sudo systemctl enable docker``sudo systemctl start
-
-```
+**Docker** sudo^ apt^ install^ - y^ docker.io``sudo systemctl enable docker``sudo systemctl start
 docker``sudo usermod - aG docker $USER
-```
-#### kubectl curl - LO "https://dl.k^8 s.io/release/$(curl- Ls
 
-```
+**kubectl** curl - LO "https://dl.k 8 s.io/release/$(curl - Ls
 https://dl.k 8 s.io/release/stable.txt)/bin/linux/amd 64 /kubectl"``sudo install - o r
 root - m 0755 kubectl /usr/local/bin/kubectl
-```
-#### Minikube curl - LO
 
-```
+### Un site vitrine Flask personnalisable via des variables d'environnement
+
+### L’ERP Odoo 13 connecté à une base PostgreSQL
+
+### pgAdmin pour l'administration graphique de la base de données
+
+
+**Outil Commande d’installation**
+
+**Minikube** curl - LO
 https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd 64 .deb
 dpkg - i minikube_latest_amd 64 .deb
-```
+
 ### Vérification après installation
 
+**Outil Commande**
 
-#### Outil Commande
+**Minikube** minikube version
 
-#### Minikube minikube version
+**kubectl** kubectl version - -client
 
-#### kubectl kubectl version - -client
+**Docker** docker - -version
 
-#### Docker docker - -version
+**Git** git - -version
 
-#### Git git - -version
+### Lancement de Minikube
 
-### 1. Lancer Minikube
+### Puis pour lancer minikube j'ai utilisé la commande :
 
-### J’ai commencé par démarrer Minikube avec la commande suivante :
+### **2. Clonage du repository GitHub**
 
-### 2. Cloner le projet Voting App
+### J’ai récupéré le projet en faisant un fork du repo : https://github.com/OlivierKouokam/mini-
 
-### Ensuite, j’ai forké le dépôt contenant les fichiers de déploiement YAML et je l'ai cloné sur ma
+### projet-5esgi et je me suis placé dans le répertoire Kubernetes :
 
-### machine :
+```
+minikube start
+```
+```
+git clone https://github.com/Vaksalan/mini-projet- 5 esgi.git
+```
 
-#### minikube start
+### **3. Conteneurisation de l'application web**
 
-#### git clone https://github.com/Vaksalan/example-voting-app
+### 3.1 - Pour la conteneurisation, j'ai en premier lieu créé un Dockerfile :
 
-#### cd example-voting-app/k 8 s-specifications
+```
+FROM python: 3. 6 - alpine
+WORKDIR /opt
+ENV ODOO_URL=http://odoo.local PGADMIN_URL=http://pgadmin.local
+COPY..
+RUN pip install flask== 1. 1. 2
+EXPOSE 8080
+ENTRYPOINT ["python", "app.py"]
+```
+### 3.2 - Puis, j'ai exécuté les commandes suivante pour build l'image
 
-
-### 3. Appliquer les manifests Kubernetes
-
-### J’ai déployé l’ensemble des services avec cette commande :
-
-### 4. Vérifier les objets déployés
-
-### Pour m’assurer que tout fonctionne bien, j’ai vérifié les pods et services :
-
-#### kubectl create - f.
-
-#### kubectl get all
-
-
-### 5. Récupérer l’adresse IP du cluster Minikube
-
-### J’ai utilisé cette commande pour connaître l’adresse IP de Minikube :
-
-### 6. Accéder aux interfaces vote/result
-
-### En utilisant l’IP récupérée précédemment et les NodePort associés aux services, j’ai pu
-
-### accéder aux interfaces suivantes :
-
-#### minikube ip
-
-#### kubectl get svc
-
-### vote : http://192.168.58.2:31000 
-
-### result : http://192.168.58.2:31001
+```
+cd mini-projet- 5 esgi/kubernetes
+```
+```
+docker build - t ic-webapp: 1. 0.
+docker run - d -p 8080 : 8080 \
+```
+- eODOO_URL=https://www.odoo.com \
+- ePGADMIN_URL=https://www.pgadmin.org \
+- -name test-ic-webapp ic-webapp
 
 
-## Résultats obtenus
+### 3.3 - Et enfin, j'ai push l'image sur DockerHub à l'aide des commandes suivantes :
+
+```
+docker login
+docker tag ic-webapp: 1. 0 vsritharan/ic-webapp: 1. 0
+docker push vaksalan 25 /ic-webapp: 1. 0
+```
+
+### https://hub.docker.com/repository/docker/vaksalan25/ic-webapp/general
+
+### **4. Déploiement des ressources Kubernetes**
+
+### Voici les fichiers que j’ai utilisés pour construire cette infrastructure
+
+**Fichier Rôle**
+
+```
+namespace.yaml Création du namespace icgroup
+odoo.yaml Déploiement et NodePort Odoo
+pgadmin-configmap.yaml Injection de servers.json dans pgAdmin
+pgadmin.yaml Déploiement de pgAdmin
+postgresql.yaml Déploiement et service PostgreSQL
+webapp-config.yaml Variables d’environnement de la webapp
+webapp.yaml Déploiement de l’application Flask
+```
+### Vous pouvez retrouvez le contenu des fichiers .yaml sur : https://github.com/Vaksalan/mini-
+
+### projet-5esgi/tree/main/kubernetes
+
+### 4.1 - Ensuite, j’ai appliqué tous les fichiers YAML avec kubectl apply - f :
+
+
+### 4.2 - Sécurisation des informations
+
+### Pour sécuriser les informations sensibles de mon projet Kubernetes, j’ai utilisé un fichier
+
+### secret.yaml qui me permet de stocker de manière masquée les identifiants et mots de
+
+### passe nécessaires au fonctionnement d’Odoo, PostgreSQL et PGAdmin. Ce fichier contient
+
+### des données encodées en base64, comme le mot de passe administrateur d’Odoo ou encore
+
+### les identifiants de connexion à PGAdmin.
+
+### secret.yaml :
+
+```
+apiVersion: v 1
+kind: Secret
+metadata:
+name: app-secrets
+namespace: icgroup
+type: Opaque
+data:
+pgadmin-email: dnNyaXRoYXJhbkBteWdlcy 5 mcg== # vsritharan@myges.fr
+pgadmin-password: YWRtaW 4 xMjM= # admin 123
+postgres-password: b 2 Rvbw== # mypostgres
+odoo-password: b 2 Rvbw== # odoo
+```
+### Pour l'appliquer dans Kubernetes j'ai effectué les étapes ci-dessous :
+
+### 1. Application du secret avec kubectl
+
+```
+kubectl apply - f secret.yaml
+```
+### 2. Vérifier que le secret est bien créé :
+
+```
+kubectl get secrets - n icgroup
+```
+
+### **5. Vérification du déploiement**
+
+### Pour m’assurer que tous les pods et services sont en place, j’ai utilisé :
+
+## Accès aux applications
+
+### 3. Affichage du contenu encodé
+
+```
+kubectl get secret app-secrets - n icgroup - o yaml
+```
+```
+kubectl get all - n icgroup
+```
+
+### Après avoir récupéré l’IP du cluster avec minikube ip, j’ai pu accéder aux services :
+
+**Application URL**
+
+Webapp [http://](http://) 192. 168. 58. 2 : 30080
+
+Odoo [http://](http://) 192. 168. 58. 2 : 30069
+
+pgAdmin [http:/](http:/) 192. 168. 58. 2 : 30050
+
+### **6. Test d'accès aux services**
+
+### Webapp Flask :
+
+### Le site vitrine Flask est fonctionnel et affiche dynamiquement les liens vers Odoo et pgAdmin
+
+### Odoo:
+
+### Odoo est connecté à PostgreSQL et permet de créer des bases
+
+
+### PgAdmin:
+
+### pgAdmin est préconfiguré grâce au fichier servers.json. Pour accéder à l’interface de
+
+### pgAdmin, j’ai utilisé les identifiants définis dans le fichier secret.yaml`, qui
+
+### contient l’email et le mot de passe encodés et injectés dans le déploiement.
+
+
+## **7. Conclusion**
+
+### Ce projet m’a permis de :
+
+### Apprendre à orchestrer plusieurs conteneurs dans un environnement Kubernetes
+
+### Utiliser les objets Secret, ConfigMap, NodePort, PVC, etc.
+
+### Comprendre comment connecter plusieurs services entre eux dans un cluster
